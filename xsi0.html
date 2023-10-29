@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 2px;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            border: 2px solid #333;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Tic-Tac-Toe</h1>
+    <div class="board" id="board"></div>
+    <p id="result"></p>
+
+    <script>
+        const board = document.getElementById("board");
+        const result = document.getElementById("result");
+        const cells = [];
+        let currentPlayer = "X";
+        let isGameOver = false;
+
+        // Creează tabla de joc
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                const cell = document.createElement("div");
+                cell.classList.add("cell");
+                cell.dataset.row = i;
+                cell.dataset.col = j;
+                cell.addEventListener("click", handleCellClick);
+                cells.push(cell);
+                board.appendChild(cell);
+            }
+        }
+
+        // Funcția de gestionare a clicurilor pe celule
+        function handleCellClick(event) {
+            if (isGameOver) return;
+
+            const cell = event.target;
+            if (cell.textContent === "") {
+                cell.textContent = currentPlayer;
+                cell.style.cursor = "not-allowed";
+
+                if (checkWinner()) {
+                    result.textContent = `${currentPlayer} a câștigat!`;
+                    isGameOver = true;
+                } else if (cells.every(cell => cell.textContent !== "")) {
+                    result.textContent = "Remiză!";
+                    isGameOver = true;
+                } else {
+                    currentPlayer = currentPlayer === "X" ? "O" : "X";
+                }
+            }
+        }
+
+        // Funcția de verificare a câștigătorului
+        function checkWinner() {
+            const winningCombos = [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6]
+            ];
+
+            for (const combo of winningCombos) {
+                const [a, b, c] = combo;
+                if (cells[a].textContent && cells[a].textContent === cells[b].textContent && cells[a].textContent === cells[c].textContent) {
+                    cells[a].style.backgroundColor = "green";
+                    cells[b].style.backgroundColor = "green";
+                    cells[c].style.backgroundColor = "green";
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    </script>
+</body>
+
+</html>
